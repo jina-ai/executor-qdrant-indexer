@@ -1,2 +1,5 @@
 manifest_version: 1
-name: executor-qdrant-indexer
+name: QdrantIndexer
+description: Qdrant indexes Documents into a weaviate server using DocumentArray  with ` `storage='qdrant'`
+url: https://github.com/jina-ai/executor-qdrant-indexer
+keywords: ['indexer qdrant ann similarity_search pre-filtering database 3.0-exclusive']
