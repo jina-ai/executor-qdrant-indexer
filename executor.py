@@ -8,7 +8,7 @@ class QdrantIndexer(Executor):
     def __init__(
         self,
         host: Optional[str] = 'localhost',
-        port: Optional[int] = 8500,
+        port: Optional[int] = 6333,
         collection_name: Optional[str] = 'persisted',
         distance: Optional[str] = 'cosine',
         n_dim: Optional[int] = 16,
