@@ -11,11 +11,12 @@ class QdrantIndexer(Executor):
         port: Optional[int] = 6333,
         collection_name: Optional[str] = 'persisted',
         distance: Optional[str] = 'cosine',
-        n_dim: Optional[int] = 16,
+        n_dim: Optional[int] = 128,
         ef_construct: Optional[int] = None,
         full_scan_threshold: Optional[int] = None,
         m: Optional[int] = None,
         scroll_batch_size: Optional[int] = 64,
+        serialize_config: Optional[Dict] = None,
         **kwargs,
     ):
 
@@ -33,6 +34,7 @@ class QdrantIndexer(Executor):
                 'm': m,
                 'scroll_batch_size': scroll_batch_size,
                 'full_scan_threshold': full_scan_threshold,
+                'serialize_config': serialize_config or {}
             },
         )
 
