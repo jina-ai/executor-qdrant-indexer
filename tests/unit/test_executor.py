@@ -1,6 +1,5 @@
 import os
 import time
-from copy import deepcopy
 
 import pytest
 from docarray.array.qdrant import DocumentArrayQdrant
@@ -11,7 +10,7 @@ import numpy as np
 from executor import QdrantIndexer
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-compose_yml = os.path.abspath(os.path.join(cur_dir, 'docker-compose.yml'))
+compose_yml = os.path.abspath(os.path.join(cur_dir, '../docker-compose.yml'))
 
 
 def assert_document_arrays_equal(arr1, arr2):
