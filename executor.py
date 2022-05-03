@@ -50,13 +50,11 @@ class QdrantIndexer(Executor):
     def search(
             self,
             docs: 'DocumentArray',
-            parameters: Optional[Dict] = None,
             **kwargs,
     ):
         """
         Perform a vector similarity search and retrieve the full Document match
         :param docs: the Documents to search with
-        :param parameters: the runtime arguments to `DocumentArray`'s match
         function. They overwrite the original match_args arguments.
         """
         docs.match(self._index)
@@ -86,6 +84,15 @@ class QdrantIndexer(Executor):
                 self.logger.warning(
                     f'cannot update doc {doc.id} as it does not exist in storage'
                 )
+
+    @requests(on='/filter')
+    def filter(self, parameters: Dict, **kwargs):
+        """
+        Query documents from the indexer by the filter `query` object in parameters. The `query` object must follow the
+        specifications in the `find` method of `DocumentArray`: https://docarray.jina.ai/fundamentals/documentarray/find/#filter-with-query-operators
+        :param parameters: parameters of the request
+        """
+        return self._index.find(parameters['query'])
 
     @requests(on='/fill_embedding')
     def fill_embedding(self, docs: DocumentArray, **kwargs):
