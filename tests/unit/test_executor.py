@@ -141,7 +141,7 @@ def test_search(metric, metric_name, docs, docker_compose):
     indexer = QdrantIndexer(collection_name='test', distance=metric)
     indexer.index(docs)
     query = DocumentArray([Document(embedding=np.random.rand(128)) for _ in range(10)])
-    indexer.search(query, {})
+    indexer.search(query)
 
     for doc in query:
         similarities = [
