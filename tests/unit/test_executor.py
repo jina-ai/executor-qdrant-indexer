@@ -45,18 +45,6 @@ def update_docs():
     )
 
 
-@pytest.fixture(scope='function')
-def docker_compose():
-    os.system(
-        f"docker-compose -f {compose_yml} --project-directory . up  --build -d --remove-orphans"
-    )
-    time.sleep(5)
-    yield
-    os.system(
-        f"docker-compose -f {compose_yml} --project-directory . down --remove-orphans"
-    )
-
-
 def test_init(docker_compose):
     qindex = QdrantIndexer(collection_name='test')
 
