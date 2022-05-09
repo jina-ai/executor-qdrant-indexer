@@ -42,9 +42,7 @@ class QdrantIndexer(Executor):
 
     @requests(on='/index')
     def index(self, docs: DocumentArray, **kwargs):
-
-        if docs:
-            self._index.extend(docs)
+        self._index.extend(docs)
 
     @requests(on='/search')
     def search(
