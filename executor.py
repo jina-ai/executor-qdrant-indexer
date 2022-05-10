@@ -7,15 +7,15 @@ from jina.logging.logger import JinaLogger
 class QdrantIndexer(Executor):
     def __init__(
         self,
-        host: Optional[str] = 'localhost',
-        port: Optional[int] = 6333,
-        collection_name: Optional[str] = 'persisted',
-        distance: Optional[str] = 'cosine',
-        n_dim: Optional[int] = 128,
+        host: str = 'localhost',
+        port: int = 6333,
+        collection_name: str = 'persisted',
+        distance: str = 'cosine',
+        n_dim: int = 128,
         ef_construct: Optional[int] = None,
         full_scan_threshold: Optional[int] = None,
         m: Optional[int] = None,
-        scroll_batch_size: Optional[int] = 64,
+        scroll_batch_size: int = 64,
         serialize_config: Optional[Dict] = None,
         **kwargs,
     ):
