@@ -72,7 +72,7 @@ You can perform CRUD operations (create, read, update and delete) using the resp
 
 ## Vector Search
 
-The following example shows how to perfom vector search using`f.post(on='/search', inputs=[Document(embedding=np.array([1,1]))])`.
+The following example shows how to perform vector search using`f.post(on='/search', inputs=[Document(embedding=np.array([1,1]))])`.
 
 
 ```python
