@@ -21,6 +21,7 @@ docker-compose -f tests/docker-compose.yml up -d
 ```python
 from jina import Flow
 from docarray import Document
+import numpy as np
 	
 f = Flow().add(
     uses='jinahub+docker://QdrantIndexer',
