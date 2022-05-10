@@ -9,7 +9,7 @@ class QdrantIndexer(Executor):
         self,
         host: str = 'localhost',
         port: int = 6333,
-        collection_name: str = 'persisted',
+        collection_name: str = 'Persisted',
         distance: str = 'cosine',
         n_dim: int = 128,
         ef_construct: Optional[int] = None,
