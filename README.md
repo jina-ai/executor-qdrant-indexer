@@ -1,6 +1,9 @@
 # executor-qdrant-indexer
 
 
+`QdrantIndexer` indexes Documents into a `DocumentArray`  using `storage='qdrant'`. Underneath, the `DocumentArray`  uses 
+ [qdrant](https://github.com/qdrant/qdrant) to store and search Documents efficiently. 
+
 ## Usage
 
 #### via Docker image (recommended)
