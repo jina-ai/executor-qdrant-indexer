@@ -136,3 +136,11 @@ def test_search(metric, metric_name, docs, docker_compose):
             t[metric_name].value for t in doc.matches[:, 'scores']
         ]
         assert sorted(similarities, reverse=True) == similarities
+
+
+def test_clear(docs, docker_compose):
+    indexer = QdrantIndexer(collection_name='test')
+    indexer.index(docs)
+    assert len(indexer._index) == 6
+    indexer.clear()
+    assert len(indexer._index) == 0
