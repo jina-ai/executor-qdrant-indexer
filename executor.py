@@ -66,16 +66,9 @@ class QdrantIndexer(Executor):
 
     @requests(on='/search')
     def search(
-<<<<<<< HEAD
         self,
         docs: 'DocumentArray',
-        parameters: Optional[Dict] = None,
         **kwargs,
-=======
-            self,
-            docs: 'DocumentArray',
-            **kwargs,
->>>>>>> 0aa357eef6dde85d684d6e5d81e9e94a16d3fa33
     ):
         """Perform a vector similarity search and retrieve the full Document match
 
