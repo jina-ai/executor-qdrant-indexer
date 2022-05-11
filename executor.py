@@ -34,7 +34,7 @@ class QdrantIndexer(Executor):
                 'm': m,
                 'scroll_batch_size': scroll_batch_size,
                 'full_scan_threshold': full_scan_threshold,
-                'serialize_config': serialize_config or {}
+                'serialize_config': serialize_config or {},
             },
         )
 
@@ -48,10 +48,10 @@ class QdrantIndexer(Executor):
 
     @requests(on='/search')
     def search(
-            self,
-            docs: 'DocumentArray',
-            parameters: Optional[Dict] = None,
-            **kwargs,
+        self,
+        docs: 'DocumentArray',
+        parameters: Optional[Dict] = None,
+        **kwargs,
     ):
         """
         Perform a vector similarity search and retrieve the full Document match
@@ -104,4 +104,5 @@ class QdrantIndexer(Executor):
         self._index.clear()
 
     def close(self) -> None:
+        super().close()
         del self._index
