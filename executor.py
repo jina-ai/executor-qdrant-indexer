@@ -111,7 +111,7 @@ class QdrantIndexer(Executor):
     def filter(self, parameters: Dict, **kwargs):
         """
         Query documents from the indexer by the filter `query` object in parameters. The `query` object must follow the
-        specifications in the `find` method of `DocumentArray` using Weaviate: https://docarray.jina.ai/fundamentals/documentarray/find/#filter-with-query-operators
+        specifications in the `find` method of `DocumentArray` in the docs https://docarray.jina.ai/fundamentals/documentarray/find/#filter-with-query-operators
         :param parameters: parameters of the request
         """
         return self._index.find(parameters['query'])
