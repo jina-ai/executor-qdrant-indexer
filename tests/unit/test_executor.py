@@ -1,5 +1,5 @@
 import os
-import time
+import operator
 
 import pytest
 from docarray.array.qdrant import DocumentArrayQdrant
@@ -161,3 +161,42 @@ def test_columns(docker_compose):
     )
     indexer.index(docs)
     assert len(indexer._index) == 10
+
+
+numeric_operators_qdrant = {
+    'gte': operator.ge,
+    'gt': operator.gt,
+    'lte': operator.le,
+    'lt': operator.lt,
+    'eq': operator.eq,
+    'neq': operator.ne,
+}
+
+
+@pytest.mark.parametrize('operator', list(numeric_operators_qdrant.keys()))
+def test_pre_filtering(docker_compose, operator: str):
+    n_dim = 3
+    indexer = QdrantIndexer(
+        collection_name='test', n_dim=n_dim, columns=[('price', 'float')]
+    )
+
+    docs = DocumentArray(
+        [
+            Document(id=f'r{i}', embedding=np.random.rand(n_dim), tags={'price': i})
+            for i in range(50)
+        ]
+    )
+    indexer.index(docs)
+
+    for threshold in [10, 20, 30]:
+
+        filter = {'must': [{'key': 'price', 'range': {operator: threshold}}]}
+        doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
+        indexer.search(doc_query, parameters={'filter': filter})
+
+        assert all(
+            [
+                numeric_operators_qdrant[operator](r.tags['price'], threshold)
+                for r in doc_query[0].matches
+            ]
+        )
