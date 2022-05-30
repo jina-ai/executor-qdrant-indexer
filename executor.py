@@ -1,5 +1,5 @@
 from jina import Executor, requests
-from typing import Optional, Dict
+from typing import Optional, Dict, List, Tuple
 from docarray import DocumentArray
 from jina.logging.logger import JinaLogger
 
@@ -19,6 +19,7 @@ class QdrantIndexer(Executor):
         m: Optional[int] = None,
         scroll_batch_size: int = 64,
         serialize_config: Optional[Dict] = None,
+        columns: Optional[List[Tuple[str, str]]] = None,
         **kwargs,
     ):
         """
@@ -36,6 +37,7 @@ class QdrantIndexer(Executor):
         :param serialize_config: DocumentArray serialize configuration.
         :param m: The maximum number of connections per element in all layers. Defaults to the default
             `m` in the Qdrant server.
+        :param columns: precise columns for the Indexer.
         """
         super().__init__(**kwargs)
 
@@ -52,6 +54,7 @@ class QdrantIndexer(Executor):
                 'scroll_batch_size': scroll_batch_size,
                 'full_scan_threshold': full_scan_threshold,
                 'serialize_config': serialize_config or {},
+                'columns': columns,
             },
         )
 

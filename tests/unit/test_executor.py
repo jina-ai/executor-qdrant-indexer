@@ -123,7 +123,10 @@ def test_persistence(docs, docker_compose):
     assert_document_arrays_equal(qindex2._index, docs)
 
 
-@pytest.mark.parametrize('metric, metric_name', [('euclidean', 'euclid_similarity'), ('cosine', 'cosine_similarity')])
+@pytest.mark.parametrize(
+    'metric, metric_name',
+    [('euclidean', 'euclid_similarity'), ('cosine', 'cosine_similarity')],
+)
 def test_search(metric, metric_name, docs, docker_compose):
     # test general/normal case
     indexer = QdrantIndexer(collection_name='test', distance=metric)
@@ -132,9 +135,7 @@ def test_search(metric, metric_name, docs, docker_compose):
     indexer.search(query)
 
     for doc in query:
-        similarities = [
-            t[metric_name].value for t in doc.matches[:, 'scores']
-        ]
+        similarities = [t[metric_name].value for t in doc.matches[:, 'scores']]
         assert sorted(similarities, reverse=True) == similarities
 
 
@@ -144,3 +145,19 @@ def test_clear(docs, docker_compose):
     assert len(indexer._index) == 6
     indexer.clear()
     assert len(indexer._index) == 0
+
+
+def test_columns(docker_compose):
+    n_dim = 3
+    indexer = QdrantIndexer(
+        collection_name='test', n_dim=n_dim, columns=[('price', 'float')]
+    )
+
+    docs = DocumentArray(
+        [
+            Document(id=f'r{i}', embedding=i * np.ones(n_dim), tags={'price': i})
+            for i in range(10)
+        ]
+    )
+    indexer.index(docs)
+    assert len(indexer._index) == 10
