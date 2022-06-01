@@ -101,3 +101,38 @@ with f:
 # will print "The ID of the best match of [1,1] is: b"
 print('The ID of the best match of [1,1] is: ', docs[0].matches[0].id)
 ```
+
+### Using pre-filtering
+
+Pre-filtering is an advanced approximate nearest neighbors feature that allows to efficiently retrieve the nearest vectors that respect the filtering condition.
+
+In contrast, post-filtering in the naive approach where you first retrieve the nearest neighbors and then discard all the candidates that do not respect the filter condition
+
+
+To do pre-filtering with the QdrantIndexer you should first define columns and precise the dimension of your embedding space.
+For instance :
+
+```python
+from jina import Flow
+from docarray import Document, DocumentArray
+
+f = Flow().add(
+    uses='jinahub+docker://QdrantIndexer',
+    uses_with={
+        'collection_name': 'test',
+        'n_dim': 3,
+        'columns': [('price', 'float')],
+    },
+)
+```
+
+Then you can pass a filter as a parameters when searching for document:
+```python
+filter = {'must': [{'key': 'price', 'range': {'gte': 30}}]}
+
+with f:
+    doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
+    f.search(doc_query, parameters={'filter': filter})
+```
+
+For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/weaviate/#vector-search-with-filter)
