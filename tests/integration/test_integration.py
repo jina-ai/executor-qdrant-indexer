@@ -53,20 +53,18 @@ numeric_operators_qdrant = {
     'gt': operator.gt,
     'lte': operator.le,
     'lt': operator.lt,
-    'eq': operator.eq,
-    'neq': operator.ne,
 }
 
 
 @pytest.mark.parametrize('operator', list(numeric_operators_qdrant.keys()))
-def test_pre_filtering(docker_compose, operator: str):
+def test_filtering(docker_compose, operator: str):
     n_dim = 3
 
     f = Flow().add(
         uses=QdrantIndexer,
         uses_with={
             'collection_name': 'test',
-            'n_dim': 2,
+            'n_dim': n_dim,
             'columns': [('price', 'float')],
         },
     )
@@ -84,11 +82,12 @@ def test_pre_filtering(docker_compose, operator: str):
 
             filter = {'must': [{'key': 'price', 'range': {operator: threshold}}]}
             doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
-            f.search(doc_query, parameters={'filter': filter})
+            indexed_docs = f.search(doc_query, parameters={'filter': filter})
 
+            print(indexed_docs[0].matches)
             assert all(
                 [
                     numeric_operators_qdrant[operator](r.tags['price'], threshold)
-                    for r in doc_query[0].matches
+                    for r in indexed_docs[0].matches
                 ]
             )
