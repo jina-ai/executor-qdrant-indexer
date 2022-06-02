@@ -185,6 +185,8 @@ def test_filtering(docker_compose, operator: str):
         doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
         indexer.search(doc_query, parameters={'filter': filter_})
 
+        assert len(doc_query[0].matches)
+
         assert all(
             [
                 numeric_operators_qdrant[operator](r.tags['price'], threshold)
