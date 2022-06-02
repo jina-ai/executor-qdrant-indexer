@@ -122,11 +122,11 @@ f = Flow().add(
 
 Then you can pass a filter as a parameters when searching for document:
 ```python
-filter = {'must': [{'key': 'price', 'range': {'gte': 30}}]}
+filter_ = {'must': [{'key': 'price', 'range': {'gte': 30}}]}
 
 with f:
     doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
-    f.search(doc_query, parameters={'filter': filter})
+    f.search(doc_query, parameters={'filter': filter_})
 ```
 
 For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/weaviate/#vector-search-with-filter)

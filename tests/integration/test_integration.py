@@ -80,9 +80,9 @@ def test_filtering(docker_compose, operator: str):
 
         for threshold in [10, 20, 30]:
 
-            filter = {'must': [{'key': 'price', 'range': {operator: threshold}}]}
+            filter_ = {'must': [{'key': 'price', 'range': {operator: threshold}}]}
             doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
-            indexed_docs = f.search(doc_query, parameters={'filter': filter})
+            indexed_docs = f.search(doc_query, parameters={'filter': filter_})
 
             assert all(
                 [
