@@ -129,4 +129,4 @@ with f:
     f.search(doc_query, parameters={'filter': filter_})
 ```
 
-For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/weaviate/#vector-search-with-filter)
+For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/qdrant/#vector-search-with-filter)
