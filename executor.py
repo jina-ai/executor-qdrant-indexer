@@ -77,6 +77,9 @@ class QdrantIndexer(Executor):
         """Perform a vector similarity search and retrieve the full Document match
 
         :param docs: the Documents to search with
+        :param parameters: The parameters for the search
+        :param kwargs: additional kwargs for the endpoint
+
         """
         docs.match(self._index, filter=parameters.get('filter', None))
 
