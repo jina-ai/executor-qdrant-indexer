@@ -1,5 +1,4 @@
 import os
-import time
 
 import pytest
 from docarray.array.qdrant import DocumentArrayQdrant
@@ -8,6 +7,7 @@ from docarray import Document, DocumentArray
 import numpy as np
 
 from executor import QdrantIndexer
+from helper import numeric_operators_qdrant
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 compose_yml = os.path.abspath(os.path.join(cur_dir, '../docker-compose.yml'))
@@ -123,7 +123,10 @@ def test_persistence(docs, docker_compose):
     assert_document_arrays_equal(qindex2._index, docs)
 
 
-@pytest.mark.parametrize('metric, metric_name', [('euclidean', 'euclid_similarity'), ('cosine', 'cosine_similarity')])
+@pytest.mark.parametrize(
+    'metric, metric_name',
+    [('euclidean', 'euclid_similarity'), ('cosine', 'cosine_similarity')],
+)
 def test_search(metric, metric_name, docs, docker_compose):
     # test general/normal case
     indexer = QdrantIndexer(collection_name='test', distance=metric)
@@ -132,9 +135,7 @@ def test_search(metric, metric_name, docs, docker_compose):
     indexer.search(query)
 
     for doc in query:
-        similarities = [
-            t[metric_name].value for t in doc.matches[:, 'scores']
-        ]
+        similarities = [t[metric_name].value for t in doc.matches[:, 'scores']]
         assert sorted(similarities, reverse=True) == similarities
 
 
@@ -144,3 +145,52 @@ def test_clear(docs, docker_compose):
     assert len(indexer._index) == 6
     indexer.clear()
     assert len(indexer._index) == 0
+
+
+def test_columns(docker_compose):
+    n_dim = 3
+    indexer = QdrantIndexer(
+        collection_name='test', n_dim=n_dim, columns=[('price', 'float')]
+    )
+
+    docs = DocumentArray(
+        [
+            Document(id=f'r{i}', embedding=i * np.ones(n_dim), tags={'price': i})
+            for i in range(10)
+        ]
+    )
+    indexer.index(docs)
+    assert len(indexer._index) == 10
+
+
+@pytest.mark.parametrize('operator', list(numeric_operators_qdrant.keys()))
+def test_filtering(docker_compose, operator: str):
+    n_dim = 3
+    indexer = QdrantIndexer(
+        collection_name='test', n_dim=n_dim, columns=[('price', 'int')]
+    )
+
+    docs = DocumentArray(
+        [
+            Document(id=f'r{i}', embedding=np.random.rand(n_dim), tags={'price': i})
+            for i in range(50)
+        ]
+    )
+    indexer.index(docs)
+
+    for threshold in [10, 20, 30]:
+
+        filter_ = {'must': [{'key': 'price', 'range': {operator: threshold}}]}
+
+        doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
+        indexer.search(doc_query, parameters={'filter': filter_})
+
+        assert len(doc_query[0].matches)
+
+        assert all(
+            [
+                numeric_operators_qdrant[operator](r.tags['price'], threshold)
+                for r in doc_query[0].matches
+            ]
+        )
+

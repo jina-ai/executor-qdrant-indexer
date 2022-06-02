@@ -1,5 +1,5 @@
 from jina import Executor, requests
-from typing import Optional, Dict
+from typing import Optional, Dict, List, Tuple
 from docarray import DocumentArray
 from jina.logging.logger import JinaLogger
 
@@ -19,6 +19,7 @@ class QdrantIndexer(Executor):
         m: Optional[int] = None,
         scroll_batch_size: int = 64,
         serialize_config: Optional[Dict] = None,
+        columns: Optional[List[Tuple[str, str]]] = None,
         **kwargs,
     ):
         """
@@ -36,6 +37,7 @@ class QdrantIndexer(Executor):
         :param serialize_config: DocumentArray serialize configuration.
         :param m: The maximum number of connections per element in all layers. Defaults to the default
             `m` in the Qdrant server.
+        :param columns: precise columns for the Indexer (used for filtering).
         """
         super().__init__(**kwargs)
 
@@ -52,6 +54,7 @@ class QdrantIndexer(Executor):
                 'scroll_batch_size': scroll_batch_size,
                 'full_scan_threshold': full_scan_threshold,
                 'serialize_config': serialize_config or {},
+                'columns': columns,
             },
         )
 
@@ -68,13 +71,17 @@ class QdrantIndexer(Executor):
     def search(
         self,
         docs: 'DocumentArray',
+        parameters: Dict = {},
         **kwargs,
     ):
         """Perform a vector similarity search and retrieve the full Document match
 
         :param docs: the Documents to search with
+        :param parameters: Dictionary to define the `filter` that you want to use.
+        :param kwargs: additional kwargs for the endpoint
+
         """
-        docs.match(self._index)
+        docs.match(self._index, filter=parameters.get('filter', None))
 
     @requests(on='/delete')
     def delete(self, parameters: Dict, **kwargs):
@@ -108,7 +115,7 @@ class QdrantIndexer(Executor):
     def filter(self, parameters: Dict, **kwargs):
         """
         Query documents from the indexer by the filter `query` object in parameters. The `query` object must follow the
-        specifications in the `find` method of `DocumentArray` using Weaviate: https://docarray.jina.ai/fundamentals/documentarray/find/#filter-with-query-operators
+        specifications in the `find` method of `DocumentArray` in the docs https://docarray.jina.ai/fundamentals/documentarray/find/#filter-with-query-operators
         :param parameters: parameters of the request
         """
         return self._index.find(parameters['query'])
