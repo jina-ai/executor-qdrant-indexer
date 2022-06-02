@@ -102,14 +102,8 @@ with f:
 print('The ID of the best match of [1,1] is: ', docs[0].matches[0].id)
 ```
 
-### Using pre-filtering
-
-Pre-filtering is an advanced approximate nearest neighbors feature that allows to efficiently retrieve the nearest vectors that respect the filtering condition.
-
-In contrast, post-filtering in the naive approach where you first retrieve the nearest neighbors and then discard all the candidates that do not respect the filter condition
-
-
-To do pre-filtering with the QdrantIndexer you should first define columns and precise the dimension of your embedding space.
+### Using filtering
+To do filtering with the QdrantIndexer you should first define columns and precise the dimension of your embedding space.
 For instance :
 
 ```python
