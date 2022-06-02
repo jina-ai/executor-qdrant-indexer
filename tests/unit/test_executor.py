@@ -1,5 +1,4 @@
 import os
-import operator
 
 import pytest
 from docarray.array.qdrant import DocumentArrayQdrant
@@ -8,6 +7,7 @@ from docarray import Document, DocumentArray
 import numpy as np
 
 from executor import QdrantIndexer
+from helper import numeric_operators_qdrant
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 compose_yml = os.path.abspath(os.path.join(cur_dir, '../docker-compose.yml'))
@@ -162,13 +162,6 @@ def test_columns(docker_compose):
     indexer.index(docs)
     assert len(indexer._index) == 10
 
-
-numeric_operators_qdrant = {
-    'gte': operator.ge,
-    'gt': operator.gt,
-    'lte': operator.le,
-    'lt': operator.lt,
-}
 
 @pytest.mark.parametrize('operator', list(numeric_operators_qdrant.keys()))
 def test_filtering(docker_compose, operator: str):

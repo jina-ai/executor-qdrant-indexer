@@ -1,12 +1,11 @@
-import operator
-
 import numpy as np
 import pytest
+
 from docarray import Document, DocumentArray
 from jina import Flow
 
 from executor import QdrantIndexer
-
+from helper import numeric_operators_qdrant
 
 def test_flow(docker_compose):
     f = Flow().add(
@@ -46,14 +45,6 @@ def test_reload_keep_state(docker_compose):
     with f:
         second_search = f.search(inputs=docs)
         assert len(first_search[0].matches) == len(second_search[0].matches)
-
-
-numeric_operators_qdrant = {
-    'gte': operator.ge,
-    'gt': operator.gt,
-    'lte': operator.le,
-    'lt': operator.lt,
-}
 
 
 @pytest.mark.parametrize('operator', list(numeric_operators_qdrant.keys()))
