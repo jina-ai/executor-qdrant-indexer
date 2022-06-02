@@ -77,7 +77,7 @@ class QdrantIndexer(Executor):
         """Perform a vector similarity search and retrieve the full Document match
 
         :param docs: the Documents to search with
-        :param parameters: The parameters for the search
+        :param parameters: Dictionary to define the `filter` that you want to use.
         :param kwargs: additional kwargs for the endpoint
 
         """
