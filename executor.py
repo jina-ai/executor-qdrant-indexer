@@ -37,7 +37,7 @@ class QdrantIndexer(Executor):
         :param serialize_config: DocumentArray serialize configuration.
         :param m: The maximum number of connections per element in all layers. Defaults to the default
             `m` in the Qdrant server.
-        :param columns: precise columns for the Indexer.
+        :param columns: precise columns for the Indexer (used for filtering).
         """
         super().__init__(**kwargs)
 
