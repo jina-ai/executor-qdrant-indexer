@@ -2,4 +2,4 @@ manifest_version: 1
 name: QdrantIndexer
 description: QdrantIndexer indexes Documents into a Qdrant server using DocumentArray with `storage='qdrant'`
 url: https://github.com/jina-ai/executor-qdrant-indexer
-keywords: ['indexer qdrant ann similarity_search pre-filtering database 3.0-exclusive']
+keywords: ['indexer', 'qdrant', 'ann', 'similarity_search', 'pre-filtering', 'database']
