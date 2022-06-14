@@ -14,6 +14,11 @@ docker-compose :
 docker-compose -f tests/docker-compose.yml up -d
 ```
 
+
+Note that if you run a `Qdrant` service locally and try to run the `QdrantIndexer` via `docker`, you 
+have to specify `'host': 'host.docker.internal'` instead of `localhost`, otherwise the client will not be 
+able to reach the service from within the container.
+
 ## Usage
 
 #### via Docker image (recommended)
