@@ -113,7 +113,6 @@ For instance :
 
 ```python
 from jina import Flow
-from docarray import Document, DocumentArray
 
 f = Flow().add(
     uses='jinahub+docker://QdrantIndexer',
@@ -123,15 +122,29 @@ f = Flow().add(
         'columns': [('price', 'float')],
     },
 )
+
+
 ```
 
 Then you can pass a filter as a parameters when searching for document:
 ```python
+from docarray import Document, DocumentArray
+import numpy as np
+
+docs = DocumentArray(
+    [
+        Document(id=f'r{i}', embedding=np.random.rand(3), tags={'price': i})
+        for i in range(50)
+    ]
+)
+
+
 filter_ = {'must': [{'key': 'price', 'range': {'gte': 30}}]}
 
 with f:
-    doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
+    f.index(docs)
+    doc_query = DocumentArray([Document(embedding=np.random.rand(3))])
     f.search(doc_query, parameters={'filter': filter_})
 ```
 
-For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/weaviate/#vector-search-with-filter)
+For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/qdrant/#vector-search-with-filter)
