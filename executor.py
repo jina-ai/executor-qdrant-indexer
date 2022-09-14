@@ -1,5 +1,5 @@
 from jina import Executor, requests
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List, Tuple, Union
 from docarray import DocumentArray
 from jina.logging.logger import JinaLogger
 
@@ -19,7 +19,7 @@ class QdrantIndexer(Executor):
         m: Optional[int] = None,
         scroll_batch_size: int = 64,
         serialize_config: Optional[Dict] = None,
-        columns: Optional[List[Tuple[str, str]]] = None,
+        columns: Optional[Union[List[Tuple[str, str]], Dict[str, str]]] = None,
         **kwargs,
     ):
         """
