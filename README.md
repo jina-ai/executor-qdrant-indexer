@@ -109,7 +109,7 @@ print('The ID of the best match of [1,1] is: ', docs[0].matches[0].id)
 
 ### Using filtering
 To do filtering with the QdrantIndexer you should first define columns and precise the dimension of your embedding space.
-For instance :
+For instance:
 
 ```python
 from jina import Flow
