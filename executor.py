@@ -1,5 +1,3 @@
-import inspect
-
 from jina import Executor, requests
 from typing import Optional, Dict, List, Tuple, Union
 from docarray import DocumentArray
@@ -92,17 +90,7 @@ class QdrantIndexer(Executor):
                 if parameters is not None
                 else self._match_args
             )
-        match_args = QdrantIndexer._filter_match_params(docs, match_args)
-        docs.match(self._index, filter=parameters.get('filter', None), **match_args)
-
-
-    @staticmethod
-    def _filter_match_params(docs, match_args):
-        # get only those arguments that exist in .match
-        args = set(inspect.getfullargspec(docs.match).args)
-        args.discard('self')
-        match_args = {k: v for k, v in match_args.items() if k in args}
-        return match_args
+        docs.match(self._index, **match_args)
 
     @requests(on='/delete')
     def delete(self, parameters: Dict, **kwargs):
