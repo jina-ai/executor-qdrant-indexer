@@ -127,9 +127,9 @@ def test_search_with_match_args(docs, limit, docker_compose):
 
     assert len(query[0].matches) == limit
 
-    docs[0].tags['text'] = 'hello'
-    docs[1].tags['text'] = 'world'
-    docs[2].tags['text'] = 'hello'
+    docs[0].text = 'hello'
+    docs[1].text = 'world'
+    docs[2].text = 'hello'
 
     indexer = QdrantIndexer(
         collection_name='test',
@@ -139,7 +139,7 @@ def test_search_with_match_args(docs, limit, docker_compose):
 
     indexer.search(query)
     assert len(query[0].matches) == 1
-    assert query[0].matches[0].tags['text'] == 'hello'
+    assert query[0].matches[0].text == 'hello'
 
 
 def test_persistence(docs, docker_compose):
