@@ -135,7 +135,7 @@ def test_search_with_match_args(docs, limit, docker_compose):
         collection_name='test',
         match_args={'filter': {'text': {'$eq': 'hello'}}, 'limit': 1},
     )
-    indexer.index(docs)
+    indexer.index(docs[:3])
 
     indexer.search(query)
     assert len(query[0].matches) == 1
