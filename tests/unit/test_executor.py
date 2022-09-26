@@ -147,9 +147,8 @@ def test_search_with_match_args(docs, limit, docker_compose):
     indexer2.index(docs)
 
     indexer2.search(query)
-    print(query[0].summary())
     assert len(query[0].matches) == 1
-    assert query[0].matches[0].text == 'hello'
+    assert query[0].matches[0].tags['text'] == 'hello'
 
 
 def test_persistence(docs, docker_compose):
