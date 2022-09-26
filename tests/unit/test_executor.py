@@ -115,6 +115,7 @@ def test_filter(docker_compose):
     assert len(result) == 1
     assert result[0].tags['x'] == 0.8
 
+
 @pytest.mark.parametrize('limit', [1, 2, 3])
 def test_search_with_match_args(docs, limit, docker_compose):
     indexer1 = QdrantIndexer(collection_name='test1', match_args={'limit': limit})
@@ -127,13 +128,21 @@ def test_search_with_match_args(docs, limit, docker_compose):
 
     assert len(query[0].matches) == limit
 
-    docs[0].text = 'hello'
-    docs[1].text = 'world'
-    docs[2].text = 'hello'
+    docs[0].tags['text'] = 'hello'
+    docs[1].tags['text'] = 'world'
+    docs[2].tags['text'] = 'hello'
 
     indexer2 = QdrantIndexer(
         collection_name='test2',
-        match_args={'filter': {'text': {'$eq': 'hello'}}, 'limit': 1},
+        columns={'text': 'str'},
+        match_args={
+            'filter': {
+                "must": [
+                    {"key": "text", "match": {"value": "hello"}},
+                ]
+            },
+            'limit': 1,
+        },
     )
     indexer2.index(docs)
 
@@ -220,4 +229,3 @@ def test_filtering(docker_compose, operator: str):
                 for r in doc_query[0].matches
             ]
         )
-
