@@ -171,7 +171,7 @@ f =  Flow().add(
 ```
 
 - For more details about overriding configurations, please refer to [this page](https://docs.jina.ai/fundamentals/executor/executor-in-flow/#special-executor-attributes).
-- You can find more about `filtering`  at Qdrant [here](https://qdrant.tech/documentation/filtering/)
+- You can find more about [Qdrant filtering](https://qdrant.tech/documentation/filtering/).
 
 ### Configure the Search Behaviors on-the-fly
 
