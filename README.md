@@ -48,7 +48,7 @@ with f:
 ```python
 from jina import Flow
 from docarray import Document
-	
+
 f = Flow().add(uses='jinahub://QdrantIndexer',
     uses_with={
         'host': 'localhost',
@@ -63,8 +63,6 @@ with f:
     f.post('/index', inputs=[Document(embedding=np.random.rand(256)) for _ in range(3)])
 ```
 
-
-
 ## CRUD Operations
 
 You can perform CRUD operations (create, read, update and delete) using the respective endpoints:
@@ -74,11 +72,9 @@ You can perform CRUD operations (create, read, update and delete) using the resp
 - `/update`: Update Documents in Qdrant.
 - `/delete`: Delete Documents in Qdrant.
 
-
 ## Vector Search
 
 The following example shows how to perform vector search using`f.post(on='/search', inputs=[Document(embedding=np.array([1,1]))])`.
-
 
 ```python
 from jina import Flow
@@ -108,6 +104,7 @@ print('The ID of the best match of [1,1] is: ', docs[0].matches[0].id)
 ```
 
 ### Using filtering
+
 To do filtering with the QdrantIndexer you should first define columns and precise the dimension of your embedding space.
 For instance :
 
@@ -127,6 +124,7 @@ f = Flow().add(
 ```
 
 Then you can pass a filter as a parameters when searching for document:
+
 ```python
 from docarray import Document, DocumentArray
 import numpy as np
@@ -145,6 +143,45 @@ with f:
     f.index(docs)
     doc_query = DocumentArray([Document(embedding=np.random.rand(3))])
     f.search(doc_query, parameters={'filter': filter_})
+```
+
+### Limit results
+
+In some cases, you will want to limit the total number of retrieved results. `QdrantIndexer` uses the `limit` argument 
+from the `match` function to set this limit. Note that when using `shards=N`, the `limit=K` is the number of retrieved results for **each shard** and total number of retrieved results is `N*K`. By default, `limits` is set to `20`. For more information about shards, please read [Jina Documentation](https://docs.jina.ai/fundamentals/flow/topology/#partition-data-by-using-shards)
+
+```python
+f =  Flow().add(
+    uses='jinahub+docker://QdrantIndexer',
+    uses_with={'match_args': {'limit': 10}})
+```
+
+### Configure other search behaviors
+
+You can use `match_args` argument to pass arguments to the `match` function as below. The match function will be called
+during `/search` endpoint.
+
+```python
+f =  Flow().add(
+     uses='jinahub+docker://QdrantIndexer',
+     uses_with={
+         'match_args': {
+            'limit': 5,
+})
+```
+
+- For more details about overriding configurations, please refer to [this page](https://docs.jina.ai/fundamentals/executor/executor-in-flow/#special-executor-attributes).
+- You can find more about [Qdrant filtering](https://qdrant.tech/documentation/filtering/).
+
+### Configure the Search Behaviors on-the-fly
+
+**At search time**, you can also pass arguments to parametrize the `match` function. This can be useful when users want to query with different arguments for different data requests. For instance, the following code makes query with a custom `limit` in `parameters` and only retrieve the top 100 nearest neighbors. This will override existing parameters in `match_args` if defined during Executor intialization.
+
+```python
+with f:
+    f.search(
+        inputs=Document(text='hello'), 
+        parameters={'limit': 100})
 ```
 
 For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/qdrant/#vector-search-with-filter)

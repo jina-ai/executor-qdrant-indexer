@@ -116,6 +116,41 @@ def test_filter(docker_compose):
     assert result[0].tags['x'] == 0.8
 
 
+@pytest.mark.parametrize('limit', [1, 2, 3])
+def test_search_with_match_args(docs, limit, docker_compose):
+    indexer1 = QdrantIndexer(collection_name='test1', match_args={'limit': limit})
+    indexer1.index(docs)
+    assert 'limit' in indexer1._match_args.keys()
+    assert indexer1._match_args['limit'] == limit
+
+    query = DocumentArray([Document(embedding=np.random.rand(128))])
+    indexer1.search(query)
+
+    assert len(query[0].matches) == limit
+
+    docs[0].tags['text'] = 'hello'
+    docs[1].tags['text'] = 'world'
+    docs[2].tags['text'] = 'hello'
+
+    indexer2 = QdrantIndexer(
+        collection_name='test2',
+        columns={'text': 'str'},
+        match_args={
+            'filter': {
+                "must": [
+                    {"key": "text", "match": {"value": "hello"}},
+                ]
+            },
+            'limit': 1,
+        },
+    )
+    indexer2.index(docs)
+
+    indexer2.search(query)
+    assert len(query[0].matches) == 1
+    assert query[0].matches[0].tags['text'] == 'hello'
+
+
 def test_persistence(docs, docker_compose):
     qindex1 = QdrantIndexer(collection_name='test', distance='euclidean')
     qindex1.index(docs)
@@ -193,4 +228,3 @@ def test_filtering(docker_compose, operator: str):
                 for r in doc_query[0].matches
             ]
         )
-

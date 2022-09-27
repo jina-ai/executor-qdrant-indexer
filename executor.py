@@ -14,6 +14,7 @@ class QdrantIndexer(Executor):
         collection_name: str = 'Persisted',
         distance: str = 'cosine',
         n_dim: int = 128,
+        match_args: Optional[Dict] = None,
         ef_construct: Optional[int] = None,
         full_scan_threshold: Optional[int] = None,
         m: Optional[int] = None,
@@ -28,6 +29,7 @@ class QdrantIndexer(Executor):
         :param collection_name: Qdrant Collection name used for the storage
         :param distance: The distance metric used for the vector index and vector search
         :param n_dim: number of dimensions
+        :param match_args: the arguments to `DocumentArray`'s match function
         :param ef_construct: The size of the dynamic list for the nearest neighbors (used during the construction).
             Controls index search speed/build speed tradeoff. Defaults to the default `ef_construct` in the Qdrant
             server.
@@ -40,6 +42,7 @@ class QdrantIndexer(Executor):
         :param columns: precise columns for the Indexer (used for filtering).
         """
         super().__init__(**kwargs)
+        self._match_args = match_args or {}
 
         self._index = DocumentArray(
             storage='qdrant',
@@ -81,7 +84,13 @@ class QdrantIndexer(Executor):
         :param kwargs: additional kwargs for the endpoint
 
         """
-        docs.match(self._index, filter=parameters.get('filter', None))
+        
+        match_args = (
+                {**self._match_args, **parameters}
+                if parameters is not None
+                else self._match_args
+            )
+        docs.match(self._index, **match_args)
 
     @requests(on='/delete')
     def delete(self, parameters: Dict, **kwargs):
