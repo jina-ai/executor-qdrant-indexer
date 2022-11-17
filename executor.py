@@ -21,6 +21,7 @@ class QdrantIndexer(Executor):
         scroll_batch_size: int = 64,
         serialize_config: Optional[Dict] = None,
         columns: Optional[Union[List[Tuple[str, str]], Dict[str, str]]] = None,
+        list_like: bool = False,
         **kwargs,
     ):
         """
@@ -48,6 +49,7 @@ class QdrantIndexer(Executor):
             storage='qdrant',
             config={
                 'collection_name': collection_name,
+                'list_like': list_like,
                 'host': host,
                 'port': port,
                 'n_dim': n_dim,
