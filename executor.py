@@ -21,7 +21,6 @@ class QdrantIndexer(Executor):
         scroll_batch_size: int = 64,
         serialize_config: Optional[Dict] = None,
         columns: Optional[Union[List[Tuple[str, str]], Dict[str, str]]] = None,
-        list_like: bool = False,
         **kwargs,
     ):
         """
@@ -49,7 +48,6 @@ class QdrantIndexer(Executor):
             storage='qdrant',
             config={
                 'collection_name': collection_name,
-                'list_like': list_like,
                 'host': host,
                 'port': port,
                 'n_dim': n_dim,
@@ -60,6 +58,7 @@ class QdrantIndexer(Executor):
                 'full_scan_threshold': full_scan_threshold,
                 'serialize_config': serialize_config or {},
                 'columns': columns,
+                'list_like': False,
             },
         )
 
@@ -129,6 +128,7 @@ class QdrantIndexer(Executor):
         specifications in the `find` method of `DocumentArray` in the docs https://docarray.jina.ai/fundamentals/documentarray/find/#filter-with-query-operators
         :param parameters: parameters of the request
         """
+        print(f"parameters['query'] = {parameters['query']}")
         return self._index.find(parameters['query'])
 
     @requests(on='/fill_embedding')
