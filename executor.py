@@ -128,7 +128,6 @@ class QdrantIndexer(Executor):
         specifications in the `find` method of `DocumentArray` in the docs https://docarray.jina.ai/fundamentals/documentarray/find/#filter-with-query-operators
         :param parameters: parameters of the request
         """
-        print(f"parameters['query'] = {parameters['query']}")
         return self._index.find(parameters['query'])
 
     @requests(on='/fill_embedding')
