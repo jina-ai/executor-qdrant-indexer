@@ -1,1 +1,2 @@
 docarray[qdrant]>=0.19.0
+qdrant-client==0.10.3
