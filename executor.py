@@ -58,7 +58,6 @@ class QdrantIndexer(Executor):
                 'full_scan_threshold': full_scan_threshold,
                 'serialize_config': serialize_config or {},
                 'columns': columns,
-                'list_like': False,
             },
         )
 

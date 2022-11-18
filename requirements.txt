@@ -1,1 +1,1 @@
-docarray[qdrant]>=0.19.0
+docarray[qdrant]
