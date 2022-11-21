@@ -158,10 +158,10 @@ def test_persistence(docs, docker_compose):
 
 
 @pytest.mark.parametrize(
-    'metric, metric_name',
-    [('euclidean', 'euclid_similarity'), ('cosine', 'cosine_similarity')],
+    'metric, metric_name, reverse',
+    [('euclidean', 'euclid_distance', False), ('cosine', 'cosine_similarity', True)],
 )
-def test_search(metric, metric_name, docs, docker_compose):
+def test_search(metric, metric_name, reverse, docs, docker_compose):
     # test general/normal case
     indexer = QdrantIndexer(collection_name='test', distance=metric)
     indexer.index(docs)
@@ -170,7 +170,8 @@ def test_search(metric, metric_name, docs, docker_compose):
 
     for doc in query:
         similarities = [t[metric_name].value for t in doc.matches[:, 'scores']]
-        assert sorted(similarities, reverse=True) == similarities
+        assert sorted(similarities, reverse=reverse) == similarities
+        assert len(similarities) == len(docs)
 
 
 def test_clear(docs, docker_compose):
