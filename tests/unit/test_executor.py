@@ -79,7 +79,6 @@ def test_update(docs, update_docs, docker_compose):
 
     # update first doc
     qindex.update(update_docs)
-    assert qindex._index[0].id == 'doc1'
     assert qindex._index['doc1'].text == 'modified'
 
 
