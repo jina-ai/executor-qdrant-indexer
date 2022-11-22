@@ -97,18 +97,19 @@ def test_fill_embeddings(docker_compose):
 
 def test_filter(docker_compose):
     docs = DocumentArray.empty(5)
-    docs[0].text = 'hello'
-    docs[1].text = 'world'
+    docs[0].tags['text'] = 'hello'
+    docs[1].tags['text'] = 'world'
     docs[2].tags['x'] = 0.3
     docs[2].tags['y'] = 0.6
     docs[3].tags['x'] = 0.8
 
-    qindex = QdrantIndexer(collection_name='test')
+    qindex = QdrantIndexer(collection_name='test', columns={'text': 'str'})
     qindex.index(docs)
 
-    result = qindex.filter(parameters={'query': {'text': {'$eq': 'hello'}}})
+    query = {'must': [{'key': 'text', 'match': {'value': 'hello'}}]}
+    result = qindex.filter(parameters={'query': query})
     assert len(result) == 1
-    assert result[0].text == 'hello'
+    assert result[0].tags['text'] == 'hello'
 
     result = docs.find({'tags__x': {'$gte': 0.5}})
     assert len(result) == 1
