@@ -160,7 +160,7 @@ def test_persistence(docs, docker_compose):
 
 @pytest.mark.parametrize(
     'metric, metric_name, reverse',
-    [('euclidean', 'euclid_distance', False), ('cosine', 'cosine_similarity', True)],
+    [('euclidean', 'euclid_similarity', False), ('cosine', 'cosine_similarity', True)],
 )
 def test_search(metric, metric_name, reverse, docs, docker_compose):
     # test general/normal case
