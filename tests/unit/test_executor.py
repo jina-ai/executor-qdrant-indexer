@@ -79,7 +79,6 @@ def test_update(docs, update_docs, docker_compose):
 
     # update first doc
     qindex.update(update_docs)
-    assert qindex._index[0].id == 'doc1'
     assert qindex._index['doc1'].text == 'modified'
 
 
@@ -98,18 +97,19 @@ def test_fill_embeddings(docker_compose):
 
 def test_filter(docker_compose):
     docs = DocumentArray.empty(5)
-    docs[0].text = 'hello'
-    docs[1].text = 'world'
+    docs[0].tags['text'] = 'hello'
+    docs[1].tags['text'] = 'world'
     docs[2].tags['x'] = 0.3
     docs[2].tags['y'] = 0.6
     docs[3].tags['x'] = 0.8
 
-    qindex = QdrantIndexer(collection_name='test')
+    qindex = QdrantIndexer(collection_name='test', columns={'text': 'str'})
     qindex.index(docs)
 
-    result = qindex.filter(parameters={'query': {'text': {'$eq': 'hello'}}})
+    query = {'must': [{'key': 'text', 'match': {'value': 'hello'}}]}
+    result = qindex.filter(parameters={'query': query})
     assert len(result) == 1
-    assert result[0].text == 'hello'
+    assert result[0].tags['text'] == 'hello'
 
     result = docs.find({'tags__x': {'$gte': 0.5}})
     assert len(result) == 1
@@ -159,10 +159,10 @@ def test_persistence(docs, docker_compose):
 
 
 @pytest.mark.parametrize(
-    'metric, metric_name',
-    [('euclidean', 'euclid_similarity'), ('cosine', 'cosine_similarity')],
+    'metric, metric_name, reverse',
+    [('euclidean', 'euclid_similarity', False), ('cosine', 'cosine_similarity', True)],
 )
-def test_search(metric, metric_name, docs, docker_compose):
+def test_search(metric, metric_name, reverse, docs, docker_compose):
     # test general/normal case
     indexer = QdrantIndexer(collection_name='test', distance=metric)
     indexer.index(docs)
@@ -171,7 +171,8 @@ def test_search(metric, metric_name, docs, docker_compose):
 
     for doc in query:
         similarities = [t[metric_name].value for t in doc.matches[:, 'scores']]
-        assert sorted(similarities, reverse=True) == similarities
+        assert sorted(similarities, reverse=reverse) == similarities
+        assert len(similarities) == len(docs)
 
 
 def test_clear(docs, docker_compose):

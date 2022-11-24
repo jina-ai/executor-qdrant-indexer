@@ -58,6 +58,7 @@ class QdrantIndexer(Executor):
                 'full_scan_threshold': full_scan_threshold,
                 'serialize_config': serialize_config or {},
                 'columns': columns,
+                'list_like': False,
             },
         )
 
@@ -84,7 +85,7 @@ class QdrantIndexer(Executor):
         :param kwargs: additional kwargs for the endpoint
 
         """
-        
+
         match_args = (
                 {**self._match_args, **parameters}
                 if parameters is not None
