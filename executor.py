@@ -60,6 +60,7 @@ class QdrantIndexer(Executor):
                 'full_scan_threshold': full_scan_threshold,
                 'serialize_config': serialize_config or {},
                 'columns': columns,
+                'list_like': False,
             },
         )
 
@@ -92,6 +93,7 @@ class QdrantIndexer(Executor):
         :param kwargs: additional kwargs for the endpoint
 
         """
+
         with self.tracer.start_as_current_span(
             'qdrant_search', context=tracing_context
         ) as span:
