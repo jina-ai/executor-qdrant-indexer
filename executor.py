@@ -1,9 +1,10 @@
-from jina import Executor, requests
-from typing import Optional, Dict, List, Tuple, Union
+import json
+from typing import Dict, List, Optional, Tuple, Union
+
 from docarray import DocumentArray
+from jina import Executor, requests
 from jina.logging.logger import JinaLogger
 from opentelemetry.trace import NoOpTracer
-import json
 
 
 class QdrantIndexer(Executor):
@@ -69,7 +70,7 @@ class QdrantIndexer(Executor):
             self.tracer = NoOpTracer()
 
     @requests(on='/index')
-    def index(self, docs: DocumentArray, tracing_context, **kwargs):
+    def index(self, docs: DocumentArray, tracing_context=None, **kwargs):
         """Index new documents
         :param docs: the Documents to index
         """
@@ -82,7 +83,7 @@ class QdrantIndexer(Executor):
     def search(
         self,
         docs: 'DocumentArray',
-        tracing_context,
+        tracing_context=None,
         parameters: Dict = {},
         **kwargs,
     ):
