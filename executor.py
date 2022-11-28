@@ -1,7 +1,10 @@
-from jina import Executor, requests
-from typing import Optional, Dict, List, Tuple, Union
+import json
+from typing import Dict, List, Optional, Tuple, Union
+
 from docarray import DocumentArray
+from jina import Executor, requests
 from jina.logging.logger import JinaLogger
+from opentelemetry.trace import NoOpTracer
 
 
 class QdrantIndexer(Executor):
@@ -63,18 +66,24 @@ class QdrantIndexer(Executor):
         )
 
         self.logger = JinaLogger(self.metas.name)
+        if not self.tracer:
+            self.tracer = NoOpTracer()
 
     @requests(on='/index')
-    def index(self, docs: DocumentArray, **kwargs):
+    def index(self, docs: DocumentArray, tracing_context=None, **kwargs):
         """Index new documents
         :param docs: the Documents to index
         """
-        self._index.extend(docs)
+        with self.tracer.start_as_current_span(
+            'qdrant_index', context=tracing_context
+        ) as span:
+            self._index.extend(docs)
 
     @requests(on='/search')
     def search(
         self,
         docs: 'DocumentArray',
+        tracing_context=None,
         parameters: Dict = {},
         **kwargs,
     ):
@@ -86,12 +95,18 @@ class QdrantIndexer(Executor):
 
         """
 
-        match_args = (
+        with self.tracer.start_as_current_span(
+            'qdrant_search', context=tracing_context
+        ) as span:
+            match_args = (
                 {**self._match_args, **parameters}
                 if parameters is not None
                 else self._match_args
             )
-        docs.match(self._index, **match_args)
+
+            span.set_attribute('match_args', json.dumps(match_args))
+            docs.match(self._index, **match_args)
+            span.set_attribute('len_matched_docs', len(docs['@m']))
 
     @requests(on='/delete')
     def delete(self, parameters: Dict, **kwargs):

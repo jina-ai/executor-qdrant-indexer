@@ -1,2 +1,2 @@
 docarray[qdrant]>=0.19.0
-jina>=3.11.2
+jina>=3.12.0
